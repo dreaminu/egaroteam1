@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>지역별 실거래 인기 평수 찾기 - 미리보기</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    .hero {
+      background: linear-gradient(135deg, #0f4c81, #1f7ab8);
+      color: white;
+      border-radius: 24px;
+      padding: 34px;
+      box-shadow: 0 16px 40px rgba(15, 76, 129, .22);
+    }
+    .hero h1 { margin: 0 0 10px; font-size: 34px; letter-spacing: -1px; }
+    .hero p { margin: 0; font-size: 17px; opacity: .95; line-height: 1.55; }
+    .notice {
+      margin-top: 18px;
+      background: #fff7e6;
+      border-left: 6px solid #f0a500;
+      border-radius: 14px;
+      padding: 16px 18px;
+      line-height: 1.6;
+    }
+    .grid { display: grid; grid-template-columns: 360px 1fr; gap: 22px; margin-top: 22px; }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 8px 28px rgba(20, 30, 50, .08);
+    }
+    .card h2 { margin: 0 0 16px; font-size: 22px; }
+    .field { margin-bottom: 18px; }
+    label { display: block; font-weight: 700; margin-bottom: 8px; }
+    input, select {
+      width: 100%;
+      border: 1px solid #d8deea;
+      background: #fbfcff;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 16px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #1f7ab8; box-shadow: 0 0 0 3px rgba(31, 122, 184, .12); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 18px;
+      background: #1f7ab8;
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: default;
+      box-shadow: 0 8px 18px rgba(31, 122, 184, .25);
+    }
+    .hint { color: #64748b; font-size: 13px; line-height: 1.55; margin-top: 8px; }
+    .answer {
+      border: 2px solid #ccebdc;
+      background: #f0fff7;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .answer h3 { margin: 0 0 8px; font-size: 22px; color: #0b6b3a; }
+    .answer .big { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin: 8px 0; }
+    .metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 18px 0; }
+    .metric { background: #eef6ff; border-radius: 16px; padding: 15px; }
+    .metric .label { color: #64748b; font-size: 13px; margin-bottom: 6px; }
+    .metric .value { font-weight: 900; font-size: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; overflow: hidden; border-radius: 14px; }
+    th { background: #17324d; color: white; padding: 11px; text-align: left; }
+    td { padding: 11px; border-bottom: 1px solid #e6eaf2; }
+    tr:nth-child(even) td { background: #fafcff; }
+    .download { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+    .download button { border: 1px solid #1f7ab8; background: white; color: #1f7ab8; border-radius: 14px; padding: 13px; font-weight: 800; font-size: 15px; }
+    .badge { display: inline-block; padding: 5px 10px; border-radius: 999px; background: #e8f2ff; color: #1f5d8c; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+    .footer { margin: 24px 0 4px; color: #64748b; font-size: 13px; line-height: 1.6; }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>지역별 실거래 인기 평수 찾기</h1>
+      <p>국토교통부 실거래가공개시스템의 시도를 선택하고 조회 연도를 고르면<br>가장 많이 거래된 <b>동네 + 평수대</b>를 찾아주는 수강생용 분석 도구입니다.</p>
+    </section>
+
+    <div class="notice">
+      <b>미리보기 화면입니다.</b> 실제 버튼 동작은 배포 후 웹앱에서 작동합니다. 여기서는 수강생이 보게 될 화면 구성과 문구를 확인하는 용도입니다.<br>
+      거래량이 많다는 것은 해당 기간 거래가 활발했다는 뜻이며, 투자 추천을 의미하지 않습니다.
+    </div>
+
+    <main class="grid">
+      <section class="card">
+        <h2>1. 검색 조건</h2>
+        <div class="field">
+          <label>시도 선택</label>
+          <select aria-label="시도 선택">
+            <option>서울특별시</option>
+            <option selected>인천광역시</option>
+            <option>경기도</option>
+            <option>부산광역시</option>
+            <option>대구광역시</option>
+            <option>대전광역시</option>
+            <option>울산광역시</option>
+            <option>세종특별자치시</option>
+            <option>강원특별자치도</option>
+            <option>충청북도</option>
+            <option>충청남도</option>
+            <option>전북특별자치도</option>
+            <option>전라남도</option>
+            <option>경상북도</option>
+            <option>경상남도</option>
+            <option>제주특별자치도</option>
+          </select>
+          <div class="hint">국토교통부 실거래가공개시스템에서 제공하는 시도 목록을 사용합니다.</div>
+        </div>
+        <div class="field">
+          <label>물건 종류</label>
+          <select aria-label="물건 종류">
+            <option selected>연립/다세대</option>
+            <option>아파트</option>
+            <option>단독/다가구</option>
+            <option>오피스텔</option>
+            <option>상업/업무용</option>
+            <option>공장/창고 등</option>
+            <option>토지</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>조회 연도</label>
+          <select aria-label="조회 연도">
+            <option>2026년</option>
+            <option selected>2025년</option>
+            <option>2024년</option>
+            <option>2023년</option>
+            <option>2022년</option>
+          </select>
+          <div class="hint">선택한 연도의 1월 1일부터 12월 31일까지 1년 단위로 조회합니다.</div>
+        </div>
+        <button class="btn">국토부에서 가져와 분석하기</button>
+        <div class="hint">수강생은 엑셀을 직접 다운로드하거나 업로드하지 않아도 됩니다.</div>
+      </section>
+
+      <section class="card">
+        <span class="badge">결과 예시 · 인천광역시 / 연립·다세대 / 2025년 전체</span>
+        <div class="answer">
+          <h3>가장 많이 거래된 동네와 평수대</h3>
+          <div class="big">인천광역시에서는 2025년에 “주안동 · 10~12평” 거래가 가장 많았습니다.</div>
+          <div class="hint">실제 결과는 국토부에서 가져온 데이터에 따라 달라집니다.</div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><div class="label">동네</div><div class="value">주안동</div></div>
+          <div class="metric"><div class="label">인기 평수대</div><div class="value">10~12평</div></div>
+          <div class="metric"><div class="label">거래건수</div><div class="value">42건</div></div>
+          <div class="metric"><div class="label">평균 거래금액</div><div class="value">9,800만원</div></div>
+          <div class="metric"><div class="label">평균 평당가</div><div class="value">890만원</div></div>
+        </div>
+
+        <div class="download">
+          <button>HTML 리포트 다운로드</button>
+          <button>엑셀 결과 다운로드</button>
+        </div>
+
+        <h2>거래량 많은 동네 + 평수대 TOP 20</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>시군구</th>
+              <th>법정동</th>
+              <th>면적구간</th>
+              <th>거래건수</th>
+              <th>평균거래금액</th>
+              <th>평균평당가</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>인천 미추홀구</td><td>주안동</td><td>10~12평</td><td>42</td><td>9,800만원</td><td>890만원</td></tr>
+            <tr><td>2</td><td>인천 계양구</td><td>작전동</td><td>12~14평</td><td>37</td><td>12,300만원</td><td>930만원</td></tr>
+            <tr><td>3</td><td>인천 남동구</td><td>간석동</td><td>10평 이하</td><td>31</td><td>6,700만원</td><td>810만원</td></tr>
+            <tr><td>4</td><td>인천 부평구</td><td>십정동</td><td>14~16평</td><td>26</td><td>13,500만원</td><td>910만원</td></tr>
+            <tr><td>5</td><td>인천 연수구</td><td>옥련동</td><td>16~18평</td><td>22</td><td>15,200만원</td><td>940만원</td></tr>
+          </tbody>
+        </table>
+
+        <div class="footer">
+          ※ 위 숫자는 화면 확인용 예시입니다. 실제 웹앱에서는 국토교통부 실거래가 공개시스템에서 받은 데이터로 계산됩니다.<br>
+          ※ 재개발 가능성, 전세가율, 임대수익률, 권리관계, 건물 상태는 이 데이터만으로 판단하지 않습니다.
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
