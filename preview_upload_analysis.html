@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>빌라 실거래 엑셀 분석기 미리보기</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif; background:#eef3f8; color:#172033; }
+    .wrap { max-width:1220px; margin:0 auto; padding:24px; }
+    .hero { background:linear-gradient(135deg,#123c69 0%,#2563eb 62%,#14b8a6 100%); color:#fff; border-radius:28px; padding:34px 36px; box-shadow:0 18px 52px rgba(37,99,235,.24); }
+    .hero h1 { margin:0 0 10px; font-size:36px; letter-spacing:-1.2px; }
+    .hero p { margin:0; font-size:17px; line-height:1.6; opacity:.96; }
+    .notice { background:#fff7ed; border-left:7px solid #f97316; border-radius:16px; padding:16px 18px; margin:18px 0; line-height:1.6; }
+    .grid { display:grid; grid-template-columns:360px 1fr; gap:22px; align-items:start; }
+    .panel, .card { background:#fff; border-radius:22px; padding:22px; box-shadow:0 8px 26px rgba(15,23,42,.07); margin-bottom:18px; }
+    .panel h2, .card h2 { margin:0 0 16px; color:#123c69; letter-spacing:-.5px; }
+    .step { margin-bottom:20px; }
+    .step h3 { margin:0 0 10px; font-size:18px; }
+    .upload { border:2px dashed #93c5fd; background:#eff6ff; border-radius:18px; padding:24px; text-align:center; color:#1d4ed8; font-weight:800; }
+    .input, .select { width:100%; border:1px solid #cbd5e1; border-radius:14px; padding:13px 14px; background:#f8fafc; color:#334155; }
+    .button { width:100%; border:0; background:#2563eb; color:#fff; border-radius:14px; padding:15px 16px; font-weight:900; font-size:16px; box-shadow:0 8px 18px rgba(37,99,235,.25); }
+    .answer { border:2px solid #bbf7d0; background:linear-gradient(180deg,#f0fdf4,#ecfeff); border-radius:22px; padding:22px; margin-bottom:18px; }
+    .answer h2 { margin:0 0 8px; color:#0b6b3a; }
+    .answer .big { font-size:26px; font-weight:900; letter-spacing:-1px; line-height:1.45; }
+    .muted { color:#64748b; font-size:14px; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+    .metric { background:#f8fbff; border:1px solid #dbeafe; border-radius:17px; padding:14px; box-shadow:0 5px 16px rgba(15,23,42,.05); }
+    .metric .label { color:#64748b; font-size:13px; }
+    .metric .value { font-size:23px; font-weight:900; margin-top:6px; letter-spacing:-.7px; }
+    .tabs { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .tab { background:#e0ecff; color:#1e3a8a; border-radius:999px; padding:9px 14px; font-weight:800; }
+    .tab.active { background:#1e3a8a; color:#fff; }
+    table { width:100%; border-collapse:collapse; font-size:14px; overflow:hidden; border-radius:14px; }
+    th { background:#1e3a8a; color:white; text-align:left; padding:10px; white-space:nowrap; }
+    td { border-bottom:1px solid #e5e7eb; padding:9px; }
+    tr:nth-child(even) td { background:#f8fafc; }
+    .downloads { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .download { background:#0f766e; color:#fff; text-align:center; border-radius:14px; padding:14px; font-weight:900; }
+    @media (max-width:900px){ .grid{grid-template-columns:1fr;} .metrics{grid-template-columns:1fr 1fr;} .wrap{padding:14px;} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>빌라 실거래 엑셀 분석기</h1>
+      <p>국토부에서 내려받은 엑셀을 업로드하면 <b>동네 → 도로명 → 연식 → 면적대</b> 순서로<br>실제 거래가 반복된 빌라 유형을 찾아 HTML 리포트와 엑셀 파일로 정리합니다.</p>
+    </section>
+
+    <div class="notice"><b>미리보기 화면입니다.</b> 실제 앱에서는 왼쪽에 엑셀을 업로드하고 분석 버튼을 누르면 오른쪽 결과가 자동 생성됩니다. 지도 연동은 다음 단계 기능입니다.</div>
+
+    <div class="grid">
+      <aside class="panel">
+        <div class="step">
+          <h3>1. 엑셀 업로드</h3>
+          <div class="upload">국토부 실거래가 엑셀 파일 끌어오기<br><span class="muted">.xlsx / .xls 여러 개 가능</span></div>
+        </div>
+        <div class="step">
+          <h3>2. 분석 대상</h3>
+          <div class="select">연립/다세대/다가구만 분석 ▾</div>
+        </div>
+        <div class="step">
+          <h3>3. 선택 필터</h3>
+          <div class="input">특정 법정동만 보기: 주안동</div><br>
+          <div class="input">리포트 제목: 인천 미추홀구 2025년 빌라</div>
+        </div>
+        <button class="button">업로드한 엑셀 분석하기</button>
+        <div style="height:10px"></div>
+        <button class="button" style="background:#475569;box-shadow:none;">화면 예시 보기</button>
+      </aside>
+
+      <main>
+        <section class="answer">
+          <h2>핵심 발견</h2>
+          <div class="big">인천 미추홀구 2025년 빌라에서 가장 반복적으로 거래된 유형은<br>“주안동 · 석바위로 · 2000~2009년식 · 10~12평” 입니다.</div>
+          <div class="muted">거래량 기준 관찰 결과이며, 투자 추천을 의미하지 않습니다.</div>
+        </section>
+
+        <section class="metrics">
+          <div class="metric"><div class="label">총 거래건수</div><div class="value">1,284건</div></div>
+          <div class="metric"><div class="label">법정동 수</div><div class="value">18개</div></div>
+          <div class="metric"><div class="label">도로명 수</div><div class="value">126개</div></div>
+          <div class="metric"><div class="label">최근 거래일</div><div class="value">2025-11-18</div></div>
+        </section>
+
+        <section class="card">
+          <div class="tabs"><div class="tab active">핵심 조합</div><div class="tab">도로명 TOP</div><div class="tab">추가조사 후보</div><div class="tab">정리 데이터</div></div>
+          <h2>도로명 + 연식 + 면적대 조합 TOP</h2>
+          <table>
+            <thead><tr><th>법정동</th><th>도로명</th><th>연식</th><th>면적대</th><th>거래건수</th><th>평균가</th><th>평균평당가</th><th>최근거래일</th></tr></thead>
+            <tbody>
+              <tr><td>주안동</td><td>석바위로</td><td>2000~2009년식</td><td>10~12평</td><td>28건</td><td>17,800만원</td><td>1,480만원</td><td>2025-11-18</td></tr>
+              <tr><td>주안동</td><td>경인로</td><td>2010~2019년식</td><td>12~14평</td><td>21건</td><td>22,400만원</td><td>1,620만원</td><td>2025-10-30</td></tr>
+              <tr><td>용현동</td><td>인주대로</td><td>1990~1999년식</td><td>14~16평</td><td>17건</td><td>18,900만원</td><td>1,210만원</td><td>2025-09-22</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h2>다운로드</h2>
+          <div class="downloads"><div class="download">분석 리포트 다운로드</div><div class="download">상세 엑셀 다운로드</div></div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
