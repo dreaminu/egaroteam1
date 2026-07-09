@@ -84,18 +84,42 @@ st.markdown(
 
     /* 지표 카드: 어떤 테마에서도 읽히도록 글자색 고정 */
     div[data-testid="stMetric"] {
-        background: #f8fbff;
+        background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
         border: 1px solid #dbeafe;
+        border-top: 4px solid #3b82f6;
         border-radius: 15px;
         padding: 14px;
-        box-shadow: 0 5px 16px rgba(15, 23, 42, .05);
+        box-shadow: 0 6px 18px rgba(37, 99, 235, .08);
     }
-    div[data-testid="stMetric"] label, div[data-testid="stMetric"] div { color: #0f172a !important; }
+    div[data-testid="stMetric"] label { color: #2563eb !important; font-weight: 700; }
+    div[data-testid="stMetric"] label p { font-size: 13.5px !important; letter-spacing: -0.2px; }
+    div[data-testid="stMetricValue"] { color: #0f172a !important; font-weight: 800; letter-spacing: -0.8px; }
 
+    /* 버튼 */
     div[data-testid="stButton"] button, div[data-testid="stDownloadButton"] button, div[data-testid="stLinkButton"] a {
         border-radius: 13px;
         padding: 0.72rem 1rem;
         font-weight: 800;
+        transition: transform .12s ease, box-shadow .12s ease;
+    }
+    div[data-testid="stButton"] button:hover, div[data-testid="stDownloadButton"] button:hover, div[data-testid="stLinkButton"] a:hover {
+        transform: translateY(-1px);
+    }
+    button[kind="primary"] {
+        background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 55%, #14b8a6 100%) !important;
+        border: none !important;
+        color: #ffffff !important;
+        box-shadow: 0 8px 22px rgba(37, 99, 235, .28);
+    }
+    button[kind="secondary"], div[data-testid="stDownloadButton"] button {
+        background: #ffffff !important;
+        border: 1.5px solid #bfdbfe !important;
+        color: #1d4ed8 !important;
+    }
+    div[data-testid="stLinkButton"] a {
+        background: #eff6ff !important;
+        border: 1.5px solid #bfdbfe !important;
+        color: #1d4ed8 !important;
     }
     h2, h3 { letter-spacing: -0.4px; }
     </style>
