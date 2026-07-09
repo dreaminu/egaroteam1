@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import tempfile
+import sys
 from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import pandas as pd
 import streamlit as st
@@ -11,6 +16,8 @@ from src.cleaner import clean_transactions
 from src.loader import read_excel_file
 from src.report import save_outputs
 
+
+MOLIT_URL = "https://rt.molit.go.kr/pt/xls/xls.do?&mobileAt="
 
 TARGET_OPTIONS = {
     "연립/다세대/다가구만 분석": ("연립", "다세대", "다가구"),
@@ -29,43 +36,65 @@ st.markdown(
     """
     <style>
     .main .block-container { padding-top: 1.2rem; max-width: 1220px; }
+
+    /* 히어로 */
     .hero-card {
         background: linear-gradient(135deg, #123c69 0%, #2563eb 62%, #14b8a6 100%);
-        color: white;
-        border-radius: 28px;
-        padding: 34px 36px;
-        margin-bottom: 18px;
-        box-shadow: 0 18px 52px rgba(37, 99, 235, .24);
+        color: #ffffff;
+        border-radius: 24px;
+        padding: 30px 34px;
+        margin-bottom: 16px;
+        box-shadow: 0 14px 40px rgba(37, 99, 235, .22);
     }
-    .hero-card h1 { margin: 0 0 10px 0; font-size: 36px; letter-spacing: -1.2px; }
-    .hero-card p { margin: 0; font-size: 17px; line-height: 1.6; opacity: .96; }
-    .notice-card {
-        background: #fff7ed;
-        border-left: 7px solid #f97316;
+    .hero-card h1 { margin: 0 0 8px 0; font-size: 34px; letter-spacing: -1.2px; color: #ffffff; }
+    .hero-card p { margin: 0; font-size: 16px; line-height: 1.6; opacity: .96; color: #ffffff; }
+
+    /* 3단계 안내 카드 */
+    .steps-row { display: flex; gap: 12px; margin-bottom: 18px; }
+    .step-card {
+        flex: 1;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
         border-radius: 16px;
-        padding: 16px 18px;
-        margin-bottom: 18px;
-        line-height: 1.6;
+        padding: 14px 16px;
+        color: #0f172a;
+        line-height: 1.5;
     }
+    .step-card .num {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 26px; height: 26px; border-radius: 50%;
+        background: #2563eb; color: #ffffff; font-weight: 800; font-size: 14px;
+        margin-right: 8px;
+    }
+    .step-card b { color: #0f172a; }
+    .step-card .desc { color: #475569; font-size: 13.5px; margin-top: 6px; }
+
+    /* 결과 카드 */
     .result-card {
-        border: 2px solid #bbf7d0;
+        border: 2px solid #86efac;
         background: linear-gradient(180deg, #f0fdf4, #ecfeff);
-        border-radius: 22px;
+        border-radius: 20px;
         padding: 22px;
         margin: 12px 0 18px 0;
+        color: #0f172a;
     }
-    .result-card h3 { margin: 0 0 8px 0; color: #0b6b3a; font-size: 23px; }
-    .result-card .big { font-size: 26px; font-weight: 900; letter-spacing: -1px; margin: 8px 0; line-height: 1.45; }
+    .result-card h3 { margin: 0 0 8px 0; color: #0b6b3a; font-size: 22px; }
+    .result-card .big { font-size: 25px; font-weight: 900; letter-spacing: -1px; margin: 8px 0; line-height: 1.45; color: #0f172a; }
+    .result-card .note { color: #64748b; font-size: 14px; }
+
+    /* 지표 카드: 어떤 테마에서도 읽히도록 글자색 고정 */
     div[data-testid="stMetric"] {
         background: #f8fbff;
         border: 1px solid #dbeafe;
-        border-radius: 17px;
+        border-radius: 15px;
         padding: 14px;
         box-shadow: 0 5px 16px rgba(15, 23, 42, .05);
     }
-    div[data-testid="stButton"] button, div[data-testid="stDownloadButton"] button {
-        border-radius: 14px;
-        padding: 0.75rem 1rem;
+    div[data-testid="stMetric"] label, div[data-testid="stMetric"] div { color: #0f172a !important; }
+
+    div[data-testid="stButton"] button, div[data-testid="stDownloadButton"] button, div[data-testid="stLinkButton"] a {
+        border-radius: 13px;
+        padding: 0.72rem 1rem;
         font-weight: 800;
     }
     h2, h3 { letter-spacing: -0.4px; }
@@ -133,10 +162,10 @@ def show_main_answer(analysis: dict, title_hint: str) -> None:
         st.markdown(
             f"""
             <div class="result-card">
-              <h3>핵심 발견</h3>
+              <h3>🔍 핵심 발견</h3>
               <div class="big">{title_hint}에서 가장 반복적으로 거래된 유형은<br>
               “{top['법정동']} · {top['도로명']} · {top['건축년도구간']} · {top['면적구간']}” 입니다.</div>
-              <div style="color:#64748b;font-size:14px;">거래량 기준 관찰 결과이며, 투자 추천을 의미하지 않습니다.</div>
+              <div class="note">거래량 기준 관찰 결과이며, 투자 추천을 의미하지 않습니다.</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -155,9 +184,9 @@ def show_main_answer(analysis: dict, title_hint: str) -> None:
         st.markdown(
             f"""
             <div class="result-card">
-              <h3>핵심 발견</h3>
+              <h3>🔍 핵심 발견</h3>
               <div class="big">가장 거래량이 많은 조합은 “{top['법정동']} · {top['면적구간']}” 입니다.</div>
-              <div style="color:#64748b;font-size:14px;">거래량 기준 관찰 결과이며, 투자 추천을 의미하지 않습니다.</div>
+              <div class="note">거래량 기준 관찰 결과이며, 투자 추천을 의미하지 않습니다.</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -169,59 +198,68 @@ def show_main_answer(analysis: dict, title_hint: str) -> None:
 st.markdown(
     """
     <div class="hero-card">
-      <h1>빌라 실거래 엑셀 분석기</h1>
-      <p>국토부에서 내려받은 엑셀을 업로드하면 <b>동네 → 도로명 → 연식 → 면적대</b> 순서로<br>
-      실제 거래가 반복된 빌라 유형을 찾아 HTML 리포트와 엑셀 파일로 정리합니다.</p>
+      <h1>🏘️ 빌라 실거래 엑셀 분석기</h1>
+      <p>국토부에서 내려받은 실거래가 엑셀을 올리면 <b>동네 → 도로명 → 연식 → 면적대</b> 순서로<br>
+      실제 거래가 반복된 빌라 유형을 찾아 리포트와 엑셀 파일로 정리해 드립니다.</p>
     </div>
-    <div class="notice-card">
-      <b>이번 버전 범위:</b> ① 엑셀 업로드 분석 ② 도로명·연식·면적대 조합 분석 ③ 분석 리포트/엑셀 다운로드까지 구현합니다.
-      지도 연동은 다음 단계에서 추가할 수 있습니다.
+    <div class="steps-row">
+      <div class="step-card"><span class="num">1</span><b>국토부에서 엑셀 받기</b>
+        <div class="desc">아래 파란 버튼으로 국토부 사이트를 열고 지역·기간을 골라 EXCEL을 내려받으세요.</div>
+      </div>
+      <div class="step-card"><span class="num">2</span><b>파일 업로드</b>
+        <div class="desc">받은 엑셀 파일을 왼쪽 업로드 칸에 끌어다 놓으세요. 여러 개도 한 번에 됩니다.</div>
+      </div>
+      <div class="step-card"><span class="num">3</span><b>분석하기 클릭</b>
+        <div class="desc">거래가 몰린 동네·도로·연식·평수대를 찾아 리포트로 정리해 드립니다.</div>
+      </div>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-with st.expander("UI 디자인 방향", expanded=False):
-    st.markdown(
-        """
-        - 첫 화면은 큰 파란색 히어로 카드로 “무엇을 찾는 도구인지” 바로 보이게 합니다.
-        - 왼쪽에는 업로드와 분석 옵션만 배치해서 수강생이 헷갈리지 않게 합니다.
-        - 오른쪽 상단에는 한 줄 결론과 핵심 지표 카드를 먼저 보여줍니다.
-        - 아래에는 도로명 TOP, 연식+면적대 조합, 추가조사 후보를 탭으로 정리합니다.
-        - 결과는 HTML 리포트와 엑셀로 바로 다운로드하게 합니다.
-        """
-    )
-
 left, right = st.columns([1, 2])
 
 with left:
-    st.header("1. 엑셀 업로드")
+    st.header("① 국토부에서 엑셀 받기")
+    st.link_button("🏛️ 국토교통부 실거래가 사이트 열기", MOLIT_URL, use_container_width=True)
+    with st.expander("처음이라면? 엑셀 받는 방법 보기", expanded=False):
+        st.markdown(
+            """
+            1. 위 버튼을 눌러 **국토부 실거래가 공개시스템**을 엽니다.
+            2. 상단 탭에서 물건 종류를 고릅니다. (예: **연립/다세대**)
+            3. **시도 · 시군구**와 **계약일자** 범위를 선택합니다. (최대 1년)
+            4. **[EXCEL 다운]** 버튼을 눌러 파일을 저장합니다.
+            5. 받은 파일을 아래 ② 업로드 칸에 올리면 끝!
+            """
+        )
+
+    st.header("② 엑셀 업로드")
     uploaded_files = st.file_uploader(
-        "국토부 실거래가 엑셀 파일",
+        "국토부 실거래가 엑셀 파일 (여러 개 가능)",
         type=["xlsx", "xls"],
         accept_multiple_files=True,
-        help="원하는 지역·년도·물건 종류는 국토부에서 직접 선택해 내려받은 뒤 여기에 올리면 됩니다.",
+        help="①에서 내려받은 엑셀 파일을 그대로 올리면 됩니다.",
     )
 
-    st.header("2. 분석 대상")
+    st.header("③ 분석 설정")
     target_label = st.selectbox("물건 종류 필터", options=list(TARGET_OPTIONS.keys()), index=0)
     target_keywords = TARGET_OPTIONS[target_label]
 
-    st.header("3. 선택 필터")
-    dong_keyword = st.text_input("특정 법정동만 보기", placeholder="예: 주안동")
-    title_hint = st.text_input("리포트 제목에 넣을 지역명", placeholder="예: 인천 미추홀구 2025년 연립/다세대")
+    with st.expander("세부 필터 (선택사항)", expanded=False):
+        dong_keyword = st.text_input("특정 법정동만 보기", placeholder="예: 주안동")
+        title_hint = st.text_input("리포트 제목에 넣을 지역명", placeholder="예: 인천 미추홀구 2025년 연립/다세대")
 
-    analyze_clicked = st.button("업로드한 엑셀 분석하기", type="primary", use_container_width=True)
-    sample_clicked = st.button("화면 예시 보기", use_container_width=True)
+    analyze_clicked = st.button("📊 업로드한 엑셀 분석하기", type="primary", use_container_width=True)
+    sample_clicked = st.button("👀 결과 화면 미리보기 (샘플)", use_container_width=True)
 
 with right:
-    st.header("4. 분석 결과")
+    st.header("분석 결과")
     if not analyze_clicked and not sample_clicked:
-        st.info("엑셀 파일을 업로드해 분석하거나, '화면 예시 보기'를 눌러 실제 Streamlit 배포 화면을 미리 확인하세요.")
+        st.info("왼쪽에서 엑셀을 올리고 '분석하기'를 누르세요. 어떤 결과가 나오는지 궁금하면 '결과 화면 미리보기'를 눌러보세요.")
         st.stop()
 
     if analyze_clicked and not uploaded_files:
-        st.warning("먼저 엑셀 파일을 1개 이상 업로드해 주세요. 화면만 확인하려면 '화면 예시 보기'를 누르세요.")
+        st.warning("먼저 엑셀 파일을 1개 이상 업로드해 주세요. 화면만 확인하려면 '결과 화면 미리보기'를 누르세요.")
         st.stop()
 
     try:
@@ -273,13 +311,13 @@ with right:
 
         with tempfile.TemporaryDirectory(prefix="realestate-output-") as tmpdir:
             outputs = save_outputs(cleaned, analysis, tmpdir, title=report_title)
-            st.subheader("다운로드")
+            st.subheader("📥 다운로드")
             d1, d2 = st.columns(2)
             with d1:
-                make_download_button("분석 리포트 다운로드", outputs["html"], "text/html")
+                make_download_button("📄 분석 리포트 다운로드", outputs["html"], "text/html")
             with d2:
                 make_download_button(
-                    "상세 엑셀 다운로드",
+                    "📊 상세 엑셀 다운로드",
                     outputs["excel"],
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 )
